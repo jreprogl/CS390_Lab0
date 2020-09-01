@@ -6,6 +6,7 @@ from tensorflow import keras
 from tensorflow.keras.utils import to_categorical
 import random
 
+from math import e
 
 # Setting random seeds to keep everything deterministic.
 random.seed(1618)
@@ -41,11 +42,15 @@ class NeuralNetwork_2Layer():
 
     # Activation function.
     def __sigmoid(self, x):
-        pass   #TODO: implement
+        exponent = -1 * x
+        res = 1 / (1 + e**exponent)
+        return res
 
     # Activation prime function.
     def __sigmoidDerivative(self, x):
-        pass   #TODO: implement
+        exponent = -1 * x
+        res = (e**exponent) / ((1 + e**exponent)**2)
+        return res
 
     # Batch generator for mini-batches. Not randomized.
     def __batchGenerator(self, l, n):
