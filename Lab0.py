@@ -7,6 +7,7 @@ from tensorflow.keras.utils import to_categorical
 import random
 
 from math import e
+import pdb
 
 # Setting random seeds to keep everything deterministic.
 random.seed(1618)
@@ -100,12 +101,18 @@ def getRawData():
 
 def preprocessData(raw):
     ((xTrain, yTrain), (xTest, yTest)) = raw            #TODO: Add range reduction here (0-255 ==> 0.0-1.0).
+    
+    # Range Reduction
+    xTrain = xTrain / 255
+    xTest = xTest / 255
+
     yTrainP = to_categorical(yTrain, NUM_CLASSES)
     yTestP = to_categorical(yTest, NUM_CLASSES)
     print("New shape of xTrain dataset: %s." % str(xTrain.shape))
     print("New shape of xTest dataset: %s." % str(xTest.shape))
     print("New shape of yTrain dataset: %s." % str(yTrainP.shape))
     print("New shape of yTest dataset: %s." % str(yTestP.shape))
+    pdb.set_trace()
     return ((xTrain, yTrainP), (xTest, yTestP))
 
 
