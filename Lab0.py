@@ -24,8 +24,8 @@ NUM_CLASSES = 10
 IMAGE_SIZE = 784
 
 # Use these to set the algorithm to use.
-ALGORITHM = "guesser"
-#ALGORITHM = "custom_net"
+#ALGORITHM = "guesser"
+ALGORITHM = "custom_net"
 #ALGORITHM = "tf_net"
 
 
@@ -57,10 +57,36 @@ class NeuralNetwork_2Layer():
     def __batchGenerator(self, l, n):
         for i in range(0, len(l), n):
             yield l[i : i + n]
+    
+    def __backProp(self, inputs, layer1, yTrain, yTest):
+        pdb.set_trace()
+        inputs = np.matrix(inputs)
+        l2e = yTest - yTrain
+        l2d = l2e * self.__sigmoidDerivative(yTrain)
+        l1e = np.dot(l2d, np.matrix(self.W2).T)
+        layer1deriv = self.__sigmoidDerivative(layer1)
+        l1e = np.squeeze(np.asarray(l1e))
+        layer1deriv = np.squeeze(np.asarray(layer1deriv))
+        l1d = l1e * layer1deriv
+        l1d = np.matrix(l1d)
+        l1a = np.dot(inputs.T, l1d) * self.lr
+        l2a = np.dot(np.matrix(layer1).T, np.matrix(l2d)) * self.lr
+        self.W1 = self.W1 + l1a
+        self.W2 = self.W2 + l2a
 
     # Training with backpropagation.
     def train(self, xVals, yVals, epochs = 100000, minibatches = True, mbs = 100):
-        pass                                   #TODO: Implement backprop. allow minibatches. mbs should specify the size of each minibatch.
+        batches = self.__batchGenerator(xVals, mbs)
+        x = 0
+        for batch in batches:
+            for image in batch:
+                image = image.flatten()
+                for i in range(0, epochs):
+                    layer1, layer2 = self.__forward(image)
+                    self.__backProp(image, layer1, layer2, yVals[x]) 
+                x += 1
+                
+
 
     # Forward pass.
     def __forward(self, input):
@@ -123,7 +149,9 @@ def trainModel(data):
         return None   # Guesser has no model, as it is just guessing.
     elif ALGORITHM == "custom_net":
         print("Building and training Custom_NN.")
-        print("Not yet implemented.")                   #TODO: Write code to build and train your custon neural net.
+        model = NeuralNetwork_2Layer(IMAGE_SIZE, NUM_CLASSES, IMAGE_SIZE)
+        pdb.set_trace()
+        model.train(xTrain, yTrain)
         return None
     elif ALGORITHM == "tf_net":
         print("Building and training TF_NN.")
