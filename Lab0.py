@@ -44,6 +44,7 @@ class NeuralNetwork_2Layer():
     # Activation function.
     def __sigmoid(self, x):
         exponent = -1 * x
+        exponent = np.squeeze(np.asarray(exponent))
         res = 1 / (1 + e**exponent)
         return res
 
@@ -59,7 +60,7 @@ class NeuralNetwork_2Layer():
             yield l[i : i + n]
     
     def __backProp(self, inputs, layer1, yTrain, yTest):
-        pdb.set_trace()
+#        pdb.set_trace()
         inputs = np.matrix(inputs)
         l2e = yTest - yTrain
         l2d = l2e * self.__sigmoidDerivative(yTrain)
@@ -75,16 +76,20 @@ class NeuralNetwork_2Layer():
         self.W2 = self.W2 + l2a
 
     # Training with backpropagation.
-    def train(self, xVals, yVals, epochs = 100000, minibatches = True, mbs = 100):
+    def train(self, xVals, yVals, epochs = 5, minibatches = True, mbs = 100):
         batches = self.__batchGenerator(xVals, mbs)
         x = 0
+        batchNum = 1
+ #       pdb.set_trace()
         for batch in batches:
+            print("Batch " + str(batchNum) + "/" + str(len(xVals) / mbs))
             for image in batch:
                 image = image.flatten()
                 for i in range(0, epochs):
                     layer1, layer2 = self.__forward(image)
                     self.__backProp(image, layer1, layer2, yVals[x]) 
                 x += 1
+            batchNum += 1
                 
 
 
@@ -131,6 +136,10 @@ def preprocessData(raw):
     # Range Reduction
     xTrain = xTrain / 255
     xTest = xTest / 255
+    
+    xTrain = xTrain[0:30000] #Change input size for testing 
+    yTrain = yTrain[0:30000]
+
 
     yTrainP = to_categorical(yTrain, NUM_CLASSES)
     yTestP = to_categorical(yTest, NUM_CLASSES)
@@ -138,7 +147,7 @@ def preprocessData(raw):
     print("New shape of xTest dataset: %s." % str(xTest.shape))
     print("New shape of yTrain dataset: %s." % str(yTrainP.shape))
     print("New shape of yTest dataset: %s." % str(yTestP.shape))
-    pdb.set_trace()
+   # pdb.set_trace()
     return ((xTrain, yTrainP), (xTest, yTestP))
 
 
@@ -150,9 +159,10 @@ def trainModel(data):
     elif ALGORITHM == "custom_net":
         print("Building and training Custom_NN.")
         model = NeuralNetwork_2Layer(IMAGE_SIZE, NUM_CLASSES, IMAGE_SIZE)
-        pdb.set_trace()
+    #    pdb.set_trace()
         model.train(xTrain, yTrain)
-        return None
+    #    pdb.set_trace()
+        return model
     elif ALGORITHM == "tf_net":
         print("Building and training TF_NN.")
         print("Not yet implemented.")                   #TODO: Write code to build and train your keras neural net.
@@ -161,14 +171,30 @@ def trainModel(data):
         raise ValueError("Algorithm not recognized.")
 
 
+def processPrediction(pred):
+    index = 0
+    highVal = -100
+    for i in range(0, len(pred)):
+        if (pred[i] > highVal):
+            index = i
+            highVal = pred[index]
+        pred[i] = 0
+    pred[index] = 1
+    return pred
+    
 
 def runModel(data, model):
     if ALGORITHM == "guesser":
         return guesserClassifier(data)
     elif ALGORITHM == "custom_net":
         print("Testing Custom_NN.")
-        print("Not yet implemented.")                   #TODO: Write code to run your custon neural net.
-        return None
+        predictions = []
+        for image in data:                               #TODO: Write code to run your custon neural net.
+            image = image.flatten()
+            pred = model.predict(image)
+            pred = processPrediction(pred)
+            predictions.append(pred)
+        return np.array(predictions)
     elif ALGORITHM == "tf_net":
         print("Testing TF_NN.")
         print("Not yet implemented.")                   #TODO: Write code to run your keras neural net.
