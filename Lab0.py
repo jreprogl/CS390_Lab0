@@ -25,8 +25,8 @@ IMAGE_SIZE = 784
 
 # Use these to set the algorithm to use.
 #ALGORITHM = "guesser"
-ALGORITHM = "custom_net"
-#ALGORITHM = "tf_net"
+#ALGORITHM = "custom_net"
+ALGORITHM = "tf_net"
 
 
 
@@ -76,7 +76,7 @@ class NeuralNetwork_2Layer():
         self.W2 = self.W2 + l2a
 
     # Training with backpropagation.
-    def train(self, xVals, yVals, epochs = 5, minibatches = True, mbs = 100):
+    def train(self, xVals, yVals, epochs = 1, minibatches = True, mbs = 100):
         batches = self.__batchGenerator(xVals, mbs)
         x = 0
         batchNum = 1
@@ -137,8 +137,8 @@ def preprocessData(raw):
     xTrain = xTrain / 255
     xTest = xTest / 255
     
-    xTrain = xTrain[0:30000] #Change input size for testing 
-    yTrain = yTrain[0:30000]
+#    xTrain = xTrain[0:30000] #Change input size for testing 
+#    yTrain = yTrain[0:30000]
 
 
     yTrainP = to_categorical(yTrain, NUM_CLASSES)
@@ -150,25 +150,42 @@ def preprocessData(raw):
    # pdb.set_trace()
     return ((xTrain, yTrainP), (xTest, yTestP))
 
+def trainKeras(model, x, y, eps=6):
+    x = x.reshape(60000, 784)
+    model.fit(x, y, epochs=eps, batch_size=100)
+    return model
+
+
+#https://towardsdatascience.com/building-our-first-neural-network-in-keras-bdc8abbc17f5
+def buildKeras(xTrain, yTrain):
+    model = keras.Sequential()
+    lossType = keras.losses.categorical_crossentropy
+    opt = tf.keras.optimizers.Adam()
+    inputShape = (IMAGE_SIZE,)
+    model.add(keras.layers.Dense(IMAGE_SIZE, input_shape=inputShape, activation=tf.nn.relu))
+    model.add(keras.layers.Dense(NUM_CLASSES, activation=tf.nn.sigmoid))
+    model.compile(optimizer = opt, loss = lossType)
+    model = trainKeras(model, xTrain, yTrain, 100)
+    return model
 
 
 def trainModel(data):
     xTrain, yTrain = data
+    
     if ALGORITHM == "guesser":
         return None   # Guesser has no model, as it is just guessing.
     elif ALGORITHM == "custom_net":
         print("Building and training Custom_NN.")
-        model = NeuralNetwork_2Layer(IMAGE_SIZE, NUM_CLASSES, IMAGE_SIZE)
-    #    pdb.set_trace()
+        model = NeuralNetwork_2Layer(IMAGE_SIZE, NUM_CLASSES, IMAGE_SIZE, .03)
         model.train(xTrain, yTrain)
-    #    pdb.set_trace()
         return model
     elif ALGORITHM == "tf_net":
-        print("Building and training TF_NN.")
-        print("Not yet implemented.")                   #TODO: Write code to build and train your keras neural net.
-        return None
+        print("Building and training TF_NN.")                         #TODO: Write code to build and train your keras neural net.
+        model = buildKeras(xTrain, yTrain)
+        return model
     else:
         raise ValueError("Algorithm not recognized.")
+
 
 
 def processPrediction(pred):
@@ -183,6 +200,14 @@ def processPrediction(pred):
     return pred
     
 
+def runKeras(model, x):
+    x = x.reshape(len(x), IMAGE_SIZE)
+    preds = model.predict(x)
+    processedPreds = []
+    for pred in preds:
+        processedPreds.append(processPrediction(pred))
+    return np.array(processedPreds)
+
 def runModel(data, model):
     if ALGORITHM == "guesser":
         return guesserClassifier(data)
@@ -196,9 +221,9 @@ def runModel(data, model):
             predictions.append(pred)
         return np.array(predictions)
     elif ALGORITHM == "tf_net":
-        print("Testing TF_NN.")
-        print("Not yet implemented.")                   #TODO: Write code to run your keras neural net.
-        return None
+        print("Testing TF_NN.")                           #TODO: Write code to run your keras neural net.
+        preds = runKeras(model, data)
+        return preds
     else:
         raise ValueError("Algorithm not recognized.")
 
