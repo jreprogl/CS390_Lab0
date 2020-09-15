@@ -25,8 +25,8 @@ IMAGE_SIZE = 784
 
 # Use these to set the algorithm to use.
 #ALGORITHM = "guesser"
-#ALGORITHM = "custom_net"
-ALGORITHM = "tf_net"
+ALGORITHM = "custom_net"
+#ALGORITHM = "tf_net"
 
 
 
@@ -162,7 +162,7 @@ def buildKeras(xTrain, yTrain):
     lossType = keras.losses.categorical_crossentropy
     opt = tf.keras.optimizers.Adam()
     inputShape = (IMAGE_SIZE,)
-    model.add(keras.layers.Dense(IMAGE_SIZE, input_shape=inputShape, activation=tf.nn.relu))
+    model.add(keras.layers.Dense(IMAGE_SIZE, input_shape=inputShape, activation=tf.nn.relu))  #was 2 layer, relu then sigmoid, 100 batch, 100 eps
     model.add(keras.layers.Dense(NUM_CLASSES, activation=tf.nn.sigmoid))
     model.compile(optimizer = opt, loss = lossType)
     model = trainKeras(model, xTrain, yTrain, 100)
@@ -232,12 +232,19 @@ def runModel(data, model):
 def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
     xTest, yTest = data
     acc = 0
+    confusionMatrix = np.zeros((10,10), int)
     for i in range(preds.shape[0]):
         if np.array_equal(preds[i], yTest[i]):   acc = acc + 1
+        predIndex = preds[i].tolist().index(1)
+        actIndex = yTest[i].tolist().index(1)
+        confusionMatrix[predIndex][actIndex] += 1
     accuracy = acc / preds.shape[0]
     print("Classifier algorithm: %s" % ALGORITHM)
     print("Classifier accuracy: %f%%" % (accuracy * 100))
     print()
+    print("Confusion Matix:\n")
+    print(confusionMatrix)
+
 
 
 

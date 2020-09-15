@@ -1,0 +1,35 @@
+Name: Joshua Reprogle
+Purdue Email: jreprogl@purdue.edu
+Link to Git Repo: https://github.com/jreprogl/CS390_Lab0.git
+Resources Used:
+	keras.io
+	Lecture Slides used for keras implementation
+	Lecture Slides used for backpropogation method
+	Unable to find again, but a stackoverflow article was used to give me the idea to use ".matrix" with the numpy arrays to help with sizing issue.
+
+Lab Parts Completed:
+Custom Neural Net:
+	Implemented Sigmoid and Sigmoid Derivative
+	Implemented Train function. Accuracy ranges between 85 and 87 percent
+	Net is 2 layer and is added into the pipeline
+
+TF Neural Net
+	Used Keras for implementation
+	2 Layer NN created, using Lecture slides as a template
+	Added into pipeline
+	Accuracy gets to 98.7%
+
+Pipeline and misc.
+	Initial data values are divided by 255
+	
+
+The custom NN was created by looping through each data set and performing each set a certain number of times (epoch). Batches are not used in the correct way and I was unable to determine how to use batches appropriately. The back-propogation was heavily based on the algorithm shown in the slides from the first lecture. Some messy code is in there where I was converting np arrays between similar types using ".matrix". I was having several issues with my arrays being the correct sizes when attempting to do dot products. I used pdb to debug a lot of my code so that I could analyze what the shapes were at runtime and determine what I needed to do in order to fix the issues. Once it was working, I left it how it was (since I did not want to break it again).
+
+The Keras NN is also heavily based off of the lecture slides, with the addition of another layer so that it became a 2 layer neural net. At the time of writing this report, I have removed two additional layers from the NN. I spent a bit of time trying to get the accuracy to 99%, but I believe the closest I got was around 98.8%. 
+
+The data evaluation is done after I preprocess the prediction results. When the predictions are returned, I go through each size 10 array and set every value to 0 except for the highest value, which I set to 1. This way, the array can be easily integrated into the evaluation function when calculating the accuracy.
+
+
+
+Relevant Outputs:
+	
