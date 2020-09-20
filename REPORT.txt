@@ -10,20 +10,20 @@ Resources Used:
 Lab Parts Completed:
 Custom Neural Net:
 	Implemented Sigmoid and Sigmoid Derivative
-	Implemented Train function. Accuracy ranges between 85 and 87 percent
+	Implemented Train function. Accuracy ranges between 85 and 88 percent
 	Net is 2 layer and is added into the pipeline
 
 TF Neural Net
 	Used Keras for implementation
 	2 Layer NN created, using Lecture slides as a template
 	Added into pipeline
-	Accuracy gets to 98.7%
+	Accuracy gets to 98.63%
 
 Pipeline and misc.
 	Initial data values are divided by 255
-	
+	Confusion matrix is constructed and printed. The first 10 columns refer to each number. The final column are the totals for each row. The same idea applies to the bottom row of the matrix. It represents the total for each column.
 
-The custom NN was created by looping through each data set and performing each set a certain number of times (epoch). Batches are not used in the correct way and I was unable to determine how to use batches appropriately. The back-propogation was heavily based on the algorithm shown in the slides from the first lecture. Some messy code is in there where I was converting np arrays between similar types using ".matrix". I was having several issues with my arrays being the correct sizes when attempting to do dot products. I used pdb to debug a lot of my code so that I could analyze what the shapes were at runtime and determine what I needed to do in order to fix the issues. Once it was working, I left it how it was (since I did not want to break it again).
+The custom NN was created by looping through each data set and performing each set a certain number of times (epoch). Batches are not used in the correct way and I was unable to determine how to use batches appropriately. The back-propogation was heavily based on the algorithm shown in the slides from the first lecture. Some messy code is in there where I was converting np arrays between similar types using ".matrix". I was having several issues with my arrays being the correct sizes when attempting to do dot products. I used pdb to debug a lot of my code so that I could analyze what the shapes were at runtime and determine what I needed to do in order to fix the issues. Once it was working, I left it how it was (since I did not want to break it again). Mini-batches were not implemented. There is some code for use of mini-batches, but I was not able to figure out what you did with their calculations. Right now, the custom neural net is just doing a single epoch and going through each image of the training set. Print statements are used to help keep track of how far along the program is.
 
 The Keras NN is also heavily based off of the lecture slides, with the addition of another layer so that it became a 2 layer neural net. At the time of writing this report, I have removed two additional layers from the NN. I spent a bit of time trying to get the accuracy to 99%, but I believe the closest I got was around 98.8%. 
 

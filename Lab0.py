@@ -81,15 +81,16 @@ class NeuralNetwork_2Layer():
         x = 0
         batchNum = 1
  #       pdb.set_trace()
-        for batch in batches:
-            print("Batch " + str(batchNum) + "/" + str(len(xVals) / mbs))
-            for image in batch:
-                image = image.flatten()
-                for i in range(0, epochs):
-                    layer1, layer2 = self.__forward(image)
-                    self.__backProp(image, layer1, layer2, yVals[x]) 
-                x += 1
-            batchNum += 1
+        for i in range(epochs):
+            for batch in batches:
+                print("Batch " + str(batchNum) + "/" + str(len(xVals) / mbs))
+                for image in batch:
+                    image = image.flatten()
+                    for i in range(0, epochs):
+                        layer1, layer2 = self.__forward(image)
+                        self.__backProp(image, layer1, layer2, yVals[x]) 
+                    x += 1
+                batchNum += 1
                 
 
 
@@ -232,13 +233,31 @@ def runModel(data, model):
 def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
     xTest, yTest = data
     acc = 0
-    confusionMatrix = np.zeros((10,10), int)
+    confusionMatrix = np.zeros((11,11), int)
     for i in range(preds.shape[0]):
         if np.array_equal(preds[i], yTest[i]):   acc = acc + 1
         predIndex = preds[i].tolist().index(1)
         actIndex = yTest[i].tolist().index(1)
         confusionMatrix[predIndex][actIndex] += 1
     accuracy = acc / preds.shape[0]
+    # Add totals to the confustion matrix
+    # Get right side totals
+    for i in range(10):
+        sum = 0
+        for x in range(10):
+            sum += confusionMatrix[i][x]
+        confusionMatrix[i][10] = sum
+    # Get bottome totals
+    for i in range(10):
+        sum = 0
+        for x in range(10):
+            sum += confusionMatrix[x][i]
+        confusionMatrix[10][i] = sum
+    #Get Total
+    sum = 0
+    for i in range(10):
+        sum += confusionMatrix[i][10]
+    confusionMatrix[10][10] = sum
     print("Classifier algorithm: %s" % ALGORITHM)
     print("Classifier accuracy: %f%%" % (accuracy * 100))
     print()
