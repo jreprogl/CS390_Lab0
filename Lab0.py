@@ -86,9 +86,8 @@ class NeuralNetwork_2Layer():
                 print("Batch " + str(batchNum) + "/" + str(len(xVals) / mbs))
                 for image in batch:
                     image = image.flatten()
-                    for i in range(0, epochs):
-                        layer1, layer2 = self.__forward(image)
-                        self.__backProp(image, layer1, layer2, yVals[x]) 
+                    layer1, layer2 = self.__forward(image)
+                    self.__backProp(image, layer1, layer2, yVals[x]) 
                     x += 1
                 batchNum += 1
                 
@@ -157,7 +156,6 @@ def trainKeras(model, x, y, eps=6):
     return model
 
 
-#https://towardsdatascience.com/building-our-first-neural-network-in-keras-bdc8abbc17f5
 def buildKeras(xTrain, yTrain):
     model = keras.Sequential()
     lossType = keras.losses.categorical_crossentropy
@@ -188,7 +186,8 @@ def trainModel(data):
         raise ValueError("Algorithm not recognized.")
 
 
-
+# Function is used to set the values in the prediction array to either 0 or 1 for easier
+# processing in the evaluation function.
 def processPrediction(pred):
     index = 0
     highVal = -100
@@ -261,7 +260,7 @@ def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
     print("Classifier algorithm: %s" % ALGORITHM)
     print("Classifier accuracy: %f%%" % (accuracy * 100))
     print()
-    print("Confusion Matix:\n")
+    print("Confusion Matix:\nColumn Labels: Truth\nRow Labels: Predictions\n")
     print(confusionMatrix)
 
 
